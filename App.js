@@ -1,9 +1,15 @@
-import { StatusBar } from "expo-status-bar";
-import React, { Component } from "react";
+import { StatusBar } from 'expo-status-bar';
+import React, { Component } from 'react';
 
-import { View, Text } from "react-native";
+import { View, Text } from 'react-native'
 
-import firebase from "firebase/app";
+import * as firebase from 'firebase'
+
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import rootReducer from './redux/reducers'
+import thunk from 'redux-thunk'
+const store = createStore(rootReducer, applyMiddleware(thunk))
 
 const firebaseConfig = {
   apiKey: "AIzaSyDuwXgZGhUT3trfO00TMr6egGxw3J3LJeo",
@@ -21,6 +27,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import LandingScreen from "./components/auth/Landing";
 import RegisterScreen from "./components/auth/Register";
 import LoginScreen from './components/auth/Login'
+import MainScreen from './components/Main'
+import AddScreen from './components/main/Add'
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { TextInput } from "react-native-gesture-handler";
@@ -73,10 +81,17 @@ export class App extends Component {
         </NavigationContainer>
       );
     }
-    return(
-      <View style={{ flex: 1, justifyContent: 'center' }}> 
-        <Text>User is Loggedin</Text>
-      </View>
+    return (
+      <Provider store={store}>
+        <NavigationContainer >
+          <Stack.Navigator initialRouteName="Main">
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Add" component={AddScreen} navigation={this.props.navigation}/>
+            {/* <Stack.Screen name="Save" component={SaveScreen} navigation={this.props.navigation}/>
+            <Stack.Screen name="Comment" component={CommentScreen} navigation={this.props.navigation}/> */}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     )
   }
 }
